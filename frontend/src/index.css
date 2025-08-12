@@ -47,14 +47,119 @@ body {
 
 /* Light Theme (Default) */
 body {
-  background-color: var(--color-whatsapp-bg);
-  color: var(--color-whatsapp-text);
+  background-color: #ffffff;
+  color: #000000;
 }
 
 /* Dark Theme */
 body.dark {
-  background-color: var(--color-whatsapp-dark-bg);
-  color: var(--color-whatsapp-dark-text);
+  background-color: #111b21;
+  color: #ffffff;
+}
+
+/* Make theme changes VERY obvious */
+.chat-container {
+  transition: all 0.3s ease;
+}
+
+body.dark .chat-container {
+  background-color: #0b141a;
+}
+
+body.dark .sidebar {
+  background-color: #202c33 !important;
+  border-color: #222d34 !important;
+}
+
+body.dark .chat-window {
+  background-color: #0b141a !important;
+}
+
+/* Dramatic color changes for better visibility */
+body.dark .bg-gray-50 {
+  background-color: #2a3942 !important;
+}
+
+body.dark .bg-gray-100 {
+  background-color: #2a3942 !important;
+}
+
+body.dark .bg-gray-200 {
+  background-color: #222d34 !important;
+}
+
+body.dark .bg-gray-300 {
+  background-color: #8696a0 !important;
+}
+
+body.dark .bg-gray-400 {
+  background-color: #8696a0 !important;
+}
+
+body.dark .bg-gray-500 {
+  background-color: #667781 !important;
+}
+
+body.dark .bg-gray-600 {
+  background-color: #667781 !important;
+}
+
+body.dark .bg-gray-700 {
+  background-color: #2a3942 !important;
+}
+
+body.dark .bg-gray-800 {
+  background-color: #202c33 !important;
+}
+
+body.dark .bg-gray-900 {
+  background-color: #111b21 !important;
+}
+
+/* Text color changes */
+body.dark .text-gray-500 {
+  color: #8696a0 !important;
+}
+
+body.dark .text-gray-600 {
+  color: #8696a0 !important;
+}
+
+body.dark .text-gray-700 {
+  color: #667781 !important;
+}
+
+body.dark .text-gray-800 {
+  color: #e9edef !important;
+}
+
+body.dark .text-gray-900 {
+  color: #e9edef !important;
+}
+
+/* Border color changes */
+body.dark .border-gray-200 {
+  border-color: #222d34 !important;
+}
+
+body.dark .border-gray-300 {
+  border-color: #222d34 !important;
+}
+
+body.dark .border-gray-400 {
+  border-color: #222d34 !important;
+}
+
+body.dark .border-gray-500 {
+  border-color: #222d34 !important;
+}
+
+body.dark .border-gray-600 {
+  border-color: #222d34 !important;
+}
+
+body.dark .border-gray-700 {
+  border-color: #222d34 !important;
 }
 
 /* Custom scrollbar for chat */

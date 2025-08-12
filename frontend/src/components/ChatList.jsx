@@ -64,17 +64,25 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
             <h1 className="text-xl font-semibold">WhatsApp</h1>
           </div>
           <div className="flex items-center space-x-2">
-            {/* Theme Toggle Button - Made more prominent */}
+            {/* Theme Toggle Button - EXTREMELY OBVIOUS */}
             <button 
               onClick={toggleTheme}
-              className="p-2 bg-white bg-opacity-20 hover:bg-white hover:bg-opacity-30 rounded-full transition-colors border border-white border-opacity-30"
+              className="px-3 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-bold rounded-lg transition-colors border-2 border-white shadow-lg"
               title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
-              {isDark ? (
-                <SunIcon className="w-5 h-5 text-white" />
-              ) : (
-                <MoonIcon className="w-5 h-5 text-white" />
-              )}
+              <div className="flex items-center space-x-2">
+                {isDark ? (
+                  <>
+                    <SunIcon className="w-5 h-5" />
+                    <span>☀️ LIGHT</span>
+                  </>
+                ) : (
+                  <>
+                    <MoonIcon className="w-5 h-5" />
+                    <span>🌙 DARK</span>
+                  </>
+                )}
+              </div>
             </button>
             <button className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors">
               <LockClosedIcon className="w-5 h-5" />
