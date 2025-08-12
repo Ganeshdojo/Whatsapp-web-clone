@@ -1,4 +1,8 @@
+import { useTheme } from '../hooks/useTheme'
+
 const MessageBubble = ({ message, isOwnMessage }) => {
+  const { isDark } = useTheme()
+  
   const formatTime = (timestamp) => {
     if (!timestamp) return ''
     const date = new Date(timestamp)
@@ -25,13 +29,13 @@ const MessageBubble = ({ message, isOwnMessage }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'sent':
-        return 'text-gray-400'
+        return 'text-gray-400 dark:text-gray-500'
       case 'delivered':
-        return 'text-gray-400'
+        return 'text-gray-400 dark:text-gray-500'
       case 'read':
-        return 'text-blue-500'
+        return 'text-blue-500 dark:text-blue-400'
       default:
-        return 'text-gray-400'
+        return 'text-gray-400 dark:text-gray-500'
     }
   }
 
@@ -40,7 +44,7 @@ const MessageBubble = ({ message, isOwnMessage }) => {
       <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg shadow-sm message-bubble ${
         isOwnMessage 
           ? 'bg-green-500 text-white rounded-br-md' 
-          : 'bg-white text-gray-900 rounded-bl-md border border-gray-200'
+          : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-bl-md border border-gray-200 dark:border-gray-600'
       }`}>
         {/* Message Content */}
         <p className="text-sm leading-relaxed break-words">
@@ -49,7 +53,7 @@ const MessageBubble = ({ message, isOwnMessage }) => {
         
         {/* Message Footer - Time and Status */}
         <div className={`flex items-center justify-between mt-2 text-xs ${
-          isOwnMessage ? 'text-green-100' : 'text-gray-500'
+          isOwnMessage ? 'text-green-100' : 'text-gray-500 dark:text-gray-400'
         }`}>
           <span>{formatTime(message.timestamp)}</span>
           
@@ -60,7 +64,7 @@ const MessageBubble = ({ message, isOwnMessage }) => {
                 {getStatusIcon(message.status)}
               </span>
               {message.status === 'read' && (
-                <span className="text-blue-400">👁️</span>
+                <span className="text-blue-400 dark:text-blue-300">👁️</span>
               )}
             </div>
           )}

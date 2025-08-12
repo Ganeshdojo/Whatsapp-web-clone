@@ -2,6 +2,7 @@
 
 /* WhatsApp Web Clone Custom Theme */
 @theme {
+  /* Light Theme Colors */
   --color-whatsapp-green: #25d366;
   --color-whatsapp-dark: #128c7e;
   --color-whatsapp-light: #dcf8c6;
@@ -10,11 +11,23 @@
   --color-whatsapp-muted: #667781;
   --color-whatsapp-bg: #ffffff;
   --color-whatsapp-sidebar: #f0f2f5;
-
+  --color-whatsapp-border: #e9edef;
+  --color-whatsapp-hover: #f5f6f6;
+  --color-whatsapp-selected: #e9edef;
+  
+  /* Dark Theme Colors */
+  --color-whatsapp-dark-bg: #111b21;
+  --color-whatsapp-dark-sidebar: #202c33;
+  --color-whatsapp-dark-text: #e9edef;
+  --color-whatsapp-dark-muted: #8696a0;
+  --color-whatsapp-dark-border: #222d34;
+  --color-whatsapp-dark-hover: #2a3942;
+  --color-whatsapp-dark-selected: #2a3942;
+  
   /* Custom spacing for chat bubbles */
   --spacing-chat: 0.75rem;
   --spacing-message: 0.5rem;
-
+  
   /* Custom shadows for depth */
   --shadow-message: 0 1px 0.5px rgba(11, 20, 26, 0.13);
   --shadow-sidebar: 0 2px 4px rgba(11, 20, 26, 0.08);
@@ -27,10 +40,21 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--color-whatsapp-bg);
-  color: var(--color-whatsapp-text);
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light Theme (Default) */
+body {
+  background-color: var(--color-whatsapp-bg);
+  color: var(--color-whatsapp-text);
+}
+
+/* Dark Theme */
+body.dark {
+  background-color: var(--color-whatsapp-dark-bg);
+  color: var(--color-whatsapp-dark-text);
 }
 
 /* Custom scrollbar for chat */
@@ -49,6 +73,15 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Dark theme scrollbar */
+body.dark ::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5a;
 }
 
 /* WhatsApp message bubble animations */
@@ -80,4 +113,48 @@ body {
 
 .status-indicator {
   animation: statusPulse 2s infinite;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .chat-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100% !important;
+    height: 100vh !important;
+  }
+  
+  .chat-window {
+    display: none;
+  }
+  
+  .chat-window.active {
+    display: flex;
+    width: 100% !important;
+    height: 100vh !important;
+  }
+  
+  .sidebar.hidden {
+    display: none;
+  }
+}
+
+/* WhatsApp Pattern Background */
+.whatsapp-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+  background-size: 100px 100px, 150px 150px, 80px 80px;
+  background-position: 0 0, 50px 50px, 25px 25px;
+}
+
+/* Dark theme pattern */
+body.dark .whatsapp-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
 }
