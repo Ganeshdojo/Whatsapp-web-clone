@@ -1,8 +1,4 @@
-import { useTheme } from '../hooks/useTheme'
-
 const MessageBubble = ({ message, isOwnMessage }) => {
-  const { isDark } = useTheme()
-  
   const formatTime = (timestamp) => {
     if (!timestamp) return ''
     const date = new Date(timestamp)

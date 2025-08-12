@@ -17,6 +17,9 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const { isDark, toggleTheme } = useTheme()
 
+  // Debug logging
+  console.log('ChatList render - isDark:', isDark)
+
   const filteredConversations = conversations.filter(conv =>
     conv.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     conv.from?.includes(searchTerm)
@@ -61,15 +64,16 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
             <h1 className="text-xl font-semibold">WhatsApp</h1>
           </div>
           <div className="flex items-center space-x-2">
+            {/* Theme Toggle Button - Made more prominent */}
             <button 
               onClick={toggleTheme}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
+              className="p-2 bg-white bg-opacity-20 hover:bg-white hover:bg-opacity-30 rounded-full transition-colors border border-white border-opacity-30"
               title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {isDark ? (
-                <SunIcon className="w-5 h-5" />
+                <SunIcon className="w-5 h-5 text-white" />
               ) : (
-                <MoonIcon className="w-5 h-5" />
+                <MoonIcon className="w-5 h-5 text-white" />
               )}
             </button>
             <button className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors">

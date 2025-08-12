@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { useTheme } from '../hooks/useTheme'
 import { 
   ArrowLeftIcon,
   TrashIcon,
@@ -14,7 +13,6 @@ const ChatWindow = ({ chat, onSendMessage, onBackToChats }) => {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(true)
   const messagesEndRef = useRef(null)
-  const { isDark } = useTheme()
 
   // Fetch messages for the selected chat
   useEffect(() => {
