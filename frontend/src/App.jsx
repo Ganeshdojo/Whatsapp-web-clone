@@ -105,7 +105,7 @@ function App() {
           isMobile && showChat ? 'hidden' : 'block'
         } ${
           isMobile ? 'w-full h-full' : 'w-1/3'
-        } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700`}>
+        } bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 chat-list-container`}>
           <ChatList 
             conversations={conversations}
             selectedChat={selectedChat}
@@ -130,7 +130,7 @@ function App() {
           ) : (
             <div className="flex items-center justify-center h-full whatsapp-pattern">
               <div className="text-center text-gray-500 dark:text-gray-400">
-                <div className="text-6xl mb-4">💬</div>
+                <div className="text-6xl mb-2">💬</div>
                 <h2 className="text-xl font-semibold mb-2">Welcome to WhatsApp Web Clone</h2>
                 <p>Select a conversation to start chatting</p>
               </div>

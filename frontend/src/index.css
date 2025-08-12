@@ -14,7 +14,7 @@
   --color-whatsapp-border: #e9edef;
   --color-whatsapp-hover: #f5f6f6;
   --color-whatsapp-selected: #e9edef;
-  
+
   /* Dark Theme Colors */
   --color-whatsapp-dark-bg: #111b21;
   --color-whatsapp-dark-sidebar: #202c33;
@@ -23,11 +23,11 @@
   --color-whatsapp-dark-border: #222d34;
   --color-whatsapp-dark-hover: #2a3942;
   --color-whatsapp-dark-selected: #2a3942;
-  
+
   /* Custom spacing for chat bubbles */
   --spacing-chat: 0.75rem;
   --spacing-message: 0.5rem;
-  
+
   /* Custom shadows for depth */
   --shadow-message: 0 1px 0.5px rgba(11, 20, 26, 0.13);
   --shadow-sidebar: 0 2px 4px rgba(11, 20, 26, 0.08);
@@ -120,22 +120,22 @@ body.dark ::-webkit-scrollbar-thumb:hover {
   .chat-container {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100% !important;
     height: 100vh !important;
   }
-  
+
   .chat-window {
     display: none;
   }
-  
+
   .chat-window.active {
     display: flex;
     width: 100% !important;
     height: 100vh !important;
   }
-  
+
   .sidebar.hidden {
     display: none;
   }
@@ -143,18 +143,58 @@ body.dark ::-webkit-scrollbar-thumb:hover {
 
 /* WhatsApp Pattern Background */
 .whatsapp-pattern {
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+  background-image: radial-gradient(
+      circle at 20% 80%,
+      rgba(120, 119, 198, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 119, 198, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(120, 219, 255, 0.3) 0%,
+      transparent 50%
+    );
   background-size: 100px 100px, 150px 150px, 80px 80px;
   background-position: 0 0, 50px 50px, 25px 25px;
 }
 
 /* Dark theme pattern */
 body.dark .whatsapp-pattern {
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+  background-image: radial-gradient(
+      circle at 20% 80%,
+      rgba(120, 119, 198, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 119, 198, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(120, 219, 255, 0.1) 0%,
+      transparent 50%
+    );
+}
+
+/* Ensure proper positioning for left navigation */
+.chat-list-container {
+  position: relative;
+}
+
+.left-nav {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 64px;
+  z-index: 10;
+}
+
+.content-area {
+  margin-left: 64px;
 }

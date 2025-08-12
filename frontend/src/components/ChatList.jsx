@@ -8,7 +8,9 @@ import {
   ChatBubbleLeftRightIcon,
   PhoneIcon,
   UserGroupIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  SunIcon,
+  MoonIcon
 } from '@heroicons/react/24/outline'
 
 const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
@@ -48,7 +50,7 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="bg-green-500 text-white p-4">
         <div className="flex items-center justify-between">
@@ -59,6 +61,17 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
             <h1 className="text-xl font-semibold">WhatsApp</h1>
           </div>
           <div className="flex items-center space-x-2">
+            <button 
+              onClick={toggleTheme}
+              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDark ? (
+                <SunIcon className="w-5 h-5" />
+              ) : (
+                <MoonIcon className="w-5 h-5" />
+              )}
+            </button>
             <button className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors">
               <LockClosedIcon className="w-5 h-5" />
             </button>
@@ -72,42 +85,8 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="p-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search or start new chat"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-          />
-          <div className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500">
-            <MagnifyingGlassIcon className="w-5 h-5" />
-          </div>
-        </div>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-600">
-        <div className="flex space-x-1">
-          {['All', 'Unread', 'Favourites', 'Groups'].map((tab) => (
-            <button
-              key={tab}
-              className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                tab === 'All'
-                  ? 'bg-green-500 text-white'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Left Navigation Icons */}
-      <div className="absolute left-0 top-20 bottom-20 w-16 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-600 flex flex-col items-center py-4 space-y-4">
+      {/* Left Navigation Icons - Fixed positioning */}
+      <div className="absolute left-0 top-20 bottom-0 w-16 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-600 flex flex-col items-center py-4 space-y-4 z-10">
         <button className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
           <ChatBubbleLeftRightIcon className="w-5 h-5" />
         </button>
@@ -129,67 +108,93 @@ const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
         </button>
       </div>
 
-      {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto ml-16">
-        {filteredConversations.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-            {searchTerm ? 'No conversations found' : 'No conversations yet'}
+      {/* Content Area - Properly positioned to avoid overlap */}
+      <div className="ml-16 flex-1 flex flex-col">
+        {/* Search Bar */}
+        <div className="p-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search or start new chat"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+            />
+            <div className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500">
+              <MagnifyingGlassIcon className="w-5 h-5" />
+            </div>
           </div>
-        ) : (
-          filteredConversations.map((conversation) => (
-            <div
-              key={conversation._id}
-              onClick={() => onChatSelect(conversation)}
-              className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                selectedChat?._id === conversation._id ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-l-green-500' : ''
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                {/* Avatar */}
-                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-                  {conversation.user_name?.charAt(0)?.toUpperCase() || 'U'}
-                </div>
+        </div>
 
-                {/* Chat Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-gray-900 dark:text-white truncate">
-                      {conversation.user_name || 'Unknown User'}
-                    </h3>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatTime(conversation.latestMessage?.timestamp)}
-                    </span>
+        {/* Filter Tabs */}
+        <div className="px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-600">
+          <div className="flex space-x-1">
+            {['All', 'Unread', 'Favourites', 'Groups'].map((tab) => (
+              <button
+                key={tab}
+                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                  tab === 'All'
+                    ? 'bg-green-500 text-white'
+                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Conversations List */}
+        <div className="flex-1 overflow-y-auto">
+          {filteredConversations.length === 0 ? (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              {searchTerm ? 'No conversations found' : 'No conversations yet'}
+            </div>
+          ) : (
+            filteredConversations.map((conversation) => (
+              <div
+                key={conversation._id}
+                onClick={() => onChatSelect(conversation)}
+                className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                  selectedChat?._id === conversation._id ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-l-green-500' : ''
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  {/* Avatar */}
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                    {conversation.user_name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
-                  
-                  <div className="flex items-center justify-between mt-1">
-                    <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
-                      {truncateMessage(conversation.latestMessage?.content)}
-                    </p>
-                    {conversation.messageCount > 0 && (
-                      <span className="text-xs bg-green-500 text-white rounded-full px-2 py-1 min-w-[20px] text-center">
-                        {conversation.messageCount}
+
+                  {/* Chat Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                        {conversation.user_name || 'Unknown User'}
+                      </h3>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {formatTime(conversation.latestMessage?.timestamp)}
                       </span>
-                    )}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-1">
+                      <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                        {truncateMessage(conversation.latestMessage?.content)}
+                      </p>
+                      {conversation.messageCount > 0 && (
+                        <span className="text-xs bg-green-500 text-white rounded-full px-2 py-1 min-w-[20px] text-center">
+                          {conversation.messageCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))
-        )}
-      </div>
+            ))
+          )}
+        </div>
 
-      {/* Footer */}
-      <div className="p-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={toggleTheme}
-            className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors"
-          >
-            <div className="w-5 h-5">
-              {isDark ? '☀️' : '🌙'}
-            </div>
-            <span className="text-xs">{isDark ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
+        {/* Footer */}
+        <div className="p-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
           <div className="text-center text-xs text-gray-500 dark:text-gray-400">
             <p>WhatsApp Web Clone - Demo Version</p>
             <p>Messages are stored locally only</p>

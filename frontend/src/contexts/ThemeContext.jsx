@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react'
 
-const ThemeContext = createContext()
+// eslint-disable-next-line react-refresh/only-export-components
+export const ThemeContext = createContext()
 
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
@@ -15,10 +16,11 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     // Update body class when theme changes
+    const body = document.body
     if (isDark) {
-      document.body.classList.add('dark')
+      body.classList.add('dark')
     } else {
-      document.body.classList.remove('dark')
+      body.classList.remove('dark')
     }
     // Save preference to localStorage
     localStorage.setItem('whatsapp-theme', isDark ? 'dark' : 'light')
