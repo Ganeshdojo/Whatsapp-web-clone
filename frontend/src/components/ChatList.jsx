@@ -1,220 +1,229 @@
-import { useState } from 'react'
-import { useTheme } from '../hooks/useTheme'
-import { 
-  MagnifyingGlassIcon, 
-  LockClosedIcon, 
-  PlusIcon, 
-  EllipsisVerticalIcon,
-  ChatBubbleLeftRightIcon,
-  PhoneIcon,
-  UserGroupIcon,
-  Cog6ToothIcon,
-  SunIcon,
-  MoonIcon
-} from '@heroicons/react/24/outline'
+import { useState } from "react";
 
-const ChatList = ({ conversations, selectedChat, onChatSelect }) => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const { isDark, toggleTheme } = useTheme()
+const ChatList = ({ selectedChat, onSelectChat, theme, onToggleTheme }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("All");
 
-  // Debug logging
-  console.log('ChatList render - isDark:', isDark)
-
-  const filteredConversations = conversations.filter(conv =>
-    conv.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    conv.from?.includes(searchTerm)
-  )
-
-  const formatTime = (timestamp) => {
-    if (!timestamp) return ''
-    const date = new Date(timestamp)
-    const now = new Date()
-    const diffInHours = (now - date) / (1000 * 60 * 60)
-
-    if (diffInHours < 24) {
-      return date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      })
-    } else if (diffInHours < 48) {
-      return 'Yesterday'
-    } else {
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric' 
-      })
+  // Sample chat data - in real app this would come from backend
+  const chats = [
+    {
+      id: 1,
+      name: "Freshers Job Bangalore",
+      lastMessage: "+91 77601 71334 joined via an invite link",
+      timestamp: "11:12",
+      unreadCount: 1,
+      isGroup: true,
+      avatar: "👥",
+      status: "joined"
+    },
+    {
+      id: 2,
+      name: "fam",
+      lastMessage: "Photo",
+      timestamp: "09:24",
+      unreadCount: 0,
+      isGroup: false,
+      avatar: "👨‍👩‍👧‍👦",
+      status: "read"
+    },
+    {
+      id: 3,
+      name: "Placement & Internship GG",
+      lastMessage: "~ Ma: Become a Google Student Ambassador - India 2025 Cohort...",
+      timestamp: "Yesterday",
+      unreadCount: 4,
+      isGroup: true,
+      avatar: "🎓",
+      status: "unread"
+    },
+    {
+      id: 4,
+      name: "Nanna",
+      lastMessage: "Photo",
+      timestamp: "Yesterday",
+      unreadCount: 0,
+      isGroup: false,
+      avatar: "👩",
+      status: "read"
+    },
+    {
+      id: 5,
+      name: "+91 93357 62834",
+      lastMessage: "why do I need to pay 15000rs?",
+      timestamp: "Yesterday",
+      unreadCount: 0,
+      isGroup: false,
+      avatar: "👤",
+      status: "read"
+    },
+    {
+      id: 6,
+      name: "Bro",
+      lastMessage: "Bangalore busstand",
+      timestamp: "Yesterday",
+      unreadCount: 0,
+      isGroup: false,
+      avatar: "👨",
+      status: "read"
+    },
+    {
+      id: 7,
+      name: "Pondy",
+      lastMessage: "This message was deleted",
+      timestamp: "Yesterday",
+      unreadCount: 1,
+      isGroup: false,
+      avatar: "👨",
+      status: "deleted"
+    },
+    {
+      id: 8,
+      name: "Gnanesh aditya",
+      lastMessage: "yep",
+      timestamp: "Sunday",
+      unreadCount: 0,
+      isGroup: false,
+      avatar: "👶",
+      status: "read"
+    },
+    {
+      id: 9,
+      name: "+91 91520 22509",
+      lastMessage: "im not interested, thank you",
+      timestamp: "Sunday",
+      unreadCount: 0,
+      isGroup: false,
+      avatar: "💼",
+      status: "read"
     }
-  }
+  ];
 
-  const truncateMessage = (content, maxLength = 50) => {
-    if (!content) return ''
-    return content.length > maxLength ? content.substring(0, maxLength) + '...' : content
-  }
+  const filteredChats = chats.filter(chat =>
+    chat.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "read":
+        return "✓✓";
+      case "delivered":
+        return "✓✓";
+      case "sent":
+        return "✓";
+      case "deleted":
+        return "🚫";
+      case "joined":
+        return "➕";
+      default:
+        return "";
+    }
+  };
 
   return (
-    <div className="h-full flex flex-col relative">
+    <div className="h-full flex flex-col bg-white dark:bg-gray-800">
       {/* Header */}
-      <div className="bg-green-500 text-white p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold">55</span>
-            </div>
-            <h1 className="text-xl font-semibold">WhatsApp</h1>
-          </div>
-          <div className="flex items-center space-x-2">
-            {/* Theme Toggle Button - EXTREMELY OBVIOUS */}
-            <button 
-              onClick={toggleTheme}
-              className="px-3 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-bold rounded-lg transition-colors border-2 border-white shadow-lg"
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              <div className="flex items-center space-x-2">
-                {isDark ? (
-                  <>
-                    <SunIcon className="w-5 h-5" />
-                    <span>☀️ LIGHT</span>
-                  </>
-                ) : (
-                  <>
-                    <MoonIcon className="w-5 h-5" />
-                    <span>🌙 DARK</span>
-                  </>
-                )}
-              </div>
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+            WhatsApp
+          </h1>
+          <div className="flex items-center gap-2">
+            <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+              🔒
             </button>
-            <button className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors">
-              <LockClosedIcon className="w-5 h-5" />
+            <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+              ➕
             </button>
-            <button className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors">
-              <PlusIcon className="w-5 h-5" />
-            </button>
-            <button className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors">
-              <EllipsisVerticalIcon className="w-5 h-5" />
+            <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+              ⋮
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Left Navigation Icons - Fixed positioning */}
-      <div className="absolute left-0 top-20 bottom-0 w-16 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-600 flex flex-col items-center py-4 space-y-4 z-10">
-        <button className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-          <ChatBubbleLeftRightIcon className="w-5 h-5" />
-        </button>
-        <button className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
-          <PhoneIcon className="w-5 h-5" />
-        </button>
-        <button className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
-          <UserGroupIcon className="w-5 h-5" />
-        </button>
-        <button className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
-          <div className="w-5 h-5 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full"></div>
-        </button>
-        <div className="flex-1"></div>
-        <button className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
-          <Cog6ToothIcon className="w-5 h-5" />
-        </button>
-        <button className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-gray-600 dark:text-gray-400">
-          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-        </button>
-      </div>
-
-      {/* Content Area - Properly positioned to avoid overlap */}
-      <div className="ml-16 flex-1 flex flex-col">
         {/* Search Bar */}
-        <div className="p-3 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search or start new chat"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-            />
-            <div className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500">
-              <MagnifyingGlassIcon className="w-5 h-5" />
-            </div>
-          </div>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search or start a new chat"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
         </div>
 
         {/* Filter Tabs */}
-        <div className="px-3 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-600">
-          <div className="flex space-x-1">
-            {['All', 'Unread', 'Favourites', 'Groups'].map((tab) => (
-              <button
-                key={tab}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                  tab === 'All'
-                    ? 'bg-green-500 text-white'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto">
-          {filteredConversations.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-              {searchTerm ? 'No conversations found' : 'No conversations yet'}
-            </div>
-          ) : (
-            filteredConversations.map((conversation) => (
-              <div
-                key={conversation._id}
-                onClick={() => onChatSelect(conversation)}
-                className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                  selectedChat?._id === conversation._id ? 'bg-gray-100 dark:bg-gray-700 border-l-4 border-l-green-500' : ''
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  {/* Avatar */}
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-                    {conversation.user_name?.charAt(0)?.toUpperCase() || 'U'}
-                  </div>
-
-                  {/* Chat Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-gray-900 dark:text-white truncate">
-                        {conversation.user_name || 'Unknown User'}
-                      </h3>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {formatTime(conversation.latestMessage?.timestamp)}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between mt-1">
-                      <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
-                        {truncateMessage(conversation.latestMessage?.content)}
-                      </p>
-                      {conversation.messageCount > 0 && (
-                        <span className="text-xs bg-green-500 text-white rounded-full px-2 py-1 min-w-[20px] text-center">
-                          {conversation.messageCount}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="p-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
-          <div className="text-center text-xs text-gray-500 dark:text-gray-400">
-            <p>WhatsApp Web Clone - Demo Version</p>
-            <p>Messages are stored locally only</p>
-          </div>
+        <div className="flex gap-2 mt-4">
+          {["All", "Unread", "Favourites", "Groups"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                activeTab === tab
+                  ? "bg-green-500 text-white"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
       </div>
-    </div>
-  )
-}
 
-export default ChatList
+      {/* Chat List */}
+      <div className="flex-1 overflow-y-auto">
+        {filteredChats.map((chat) => (
+          <div
+            key={chat.id}
+            onClick={() => onSelectChat(chat)}
+            className={`flex items-center p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+              selectedChat?.id === chat.id
+                ? "bg-gray-100 dark:bg-gray-700"
+                : ""
+            }`}
+          >
+            {/* Avatar */}
+            <div className="w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xl mr-3">
+              {chat.avatar}
+            </div>
+
+            {/* Chat Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-gray-800 dark:text-white truncate">
+                  {chat.name}
+                </h3>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {chat.timestamp}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-gray-600 dark:text-gray-300 truncate flex items-center gap-1">
+                  {getStatusIcon(chat.status)}
+                  {chat.lastMessage}
+                </p>
+                {chat.unreadCount > 0 && (
+                  <span className="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {chat.unreadCount}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom Section */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <button
+          onClick={onToggleTheme}
+          className="w-full p-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+        >
+          {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ChatList;

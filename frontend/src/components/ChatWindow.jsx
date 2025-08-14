@@ -1,165 +1,252 @@
-import { useState, useEffect, useRef } from 'react'
-import { 
-  ArrowLeftIcon,
-  TrashIcon,
-  VideoCameraIcon,
-  MagnifyingGlassIcon,
-  EllipsisVerticalIcon
-} from '@heroicons/react/24/outline'
-import MessageBubble from './MessageBubble'
-import SendMessage from './SendMessage'
+import { useState, useEffect, useRef } from "react";
 
-const ChatWindow = ({ chat, onSendMessage, onBackToChats }) => {
-  const [messages, setMessages] = useState([])
-  const [loading, setLoading] = useState(true)
-  const messagesEndRef = useRef(null)
+const ChatWindow = ({ chat, theme }) => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  // Fetch messages for the selected chat
+  // Sample messages data - in real app this would come from backend
   useEffect(() => {
-    if (chat?._id) {
-      fetchMessages(chat._id)
+    if (chat) {
+      const sampleMessages = [
+        {
+          id: 1,
+          text: "Dear Candidate, We are hiring for frontend developer fresher position. 12 month contract. Required Qualification- B.tech/MCA/BCA. Required Skills WordPress/HTML/CSS/JS. Please check the link for security contract details: https://wavenix.cloud/bond-information/ Company: Wavenix Technologies Lucknow. About Company: We are a digital growth partner specializing in delivering innovative IT solutions.",
+          sender: "them",
+          timestamp: "21:12",
+          status: "read",
+          date: "2/8/2025"
+        },
+        {
+          id: 2,
+          text: "Thank you, Why do I need to pay the 15000rs?",
+          sender: "me",
+          timestamp: "11:59",
+          status: "read"
+        },
+        {
+          id: 3,
+          text: "We specialize in delivering innovative IT solutions that help businesses grow and succeed in the digital age.",
+          sender: "them",
+          timestamp: "13:44",
+          status: "read"
+        },
+        {
+          id: 4,
+          text: "why do I need to pay 15000rs?",
+          sender: "me",
+          timestamp: "14:40",
+          status: "read"
+        },
+        {
+          id: 5,
+          text: "The 15000rs is a security deposit for the 12-month contract period. It ensures commitment and covers any potential damages or early termination fees.",
+          sender: "them",
+          timestamp: "15:30",
+          status: "delivered"
+        }
+      ];
+      setMessages(sampleMessages);
     }
-  }, [chat?._id])
+  }, [chat]);
 
-  const fetchMessages = async (waId) => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/messages/${waId}`)
-      const data = await response.json()
-      setMessages(data)
-      setLoading(false)
-    } catch (error) {
-      console.error('Error fetching messages:', error)
-      setLoading(false)
-    }
-  }
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  const handleSendMessage = async (messageText) => {
-    if (!messageText.trim()) return
-
-    const messageData = {
-      wa_id: chat._id,
-      content: messageText,
-      user_name: 'Demo User',
-      from: chat._id,
-      to: '918329446654' // Business number
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      const message = {
+        id: Date.now(),
+        text: newMessage,
+        sender: "me",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "sent"
+      };
+      setMessages(prev => [...prev, message]);
+      setNewMessage("");
+      
+      // Simulate typing indicator
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        // Simulate received message
+        const reply = {
+          id: Date.now() + 1,
+          text: "Thanks for your message! I'll get back to you soon.",
+          sender: "them",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: "read"
+        };
+        setMessages(prev => [...prev, reply]);
+      }, 2000);
     }
+  };
 
-    // Optimistically add message to UI
-    const tempMessage = {
-      _id: `temp-${Date.now()}`,
-      content: messageText,
-      from: chat._id,
-      timestamp: new Date().toISOString(),
-      status: 'sent',
-      message_type: 'text'
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
+  };
 
-    setMessages(prev => [...prev, tempMessage])
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "read":
+        return "✓✓";
+      case "delivered":
+        return "✓✓";
+      case "sent":
+        return "✓";
+      default:
+        return "";
+    }
+  };
 
-    // Send to backend
-    await onSendMessage(messageData)
+  const formatDate = (date) => {
+    const today = new Date();
+    const messageDate = new Date(date);
+    
+    if (today.toDateString() === messageDate.toDateString()) {
+      return "Today";
+    } else if (today.getDate() - messageDate.getDate() === 1) {
+      return "Yesterday";
+    } else {
+      return messageDate.toLocaleDateString();
+    }
+  };
 
-    // Refresh messages to get the real message from backend
-    fetchMessages(chat._id)
-  }
-
-  if (!chat) {
-    return null
-  }
+  if (!chat) return null;
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-800">
       {/* Chat Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center space-x-3">
-        {/* Mobile Back Button */}
-        {onBackToChats && (
-          <button
-            onClick={onBackToChats}
-            className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-          >
-            <ArrowLeftIcon className="w-5 h-5" />
-          </button>
-        )}
-        
-        {/* Avatar */}
-        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold">
-          {chat.user_name?.charAt(0)?.toUpperCase() || 'U'}
+      <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+        <div className="flex items-center">
+          <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-lg mr-3">
+            {chat.avatar}
+          </div>
+          <div>
+            <h2 className="font-semibold text-gray-800 dark:text-white">
+              {chat.name}
+            </h2>
+            {chat.isGroup && (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Group • {chat.memberCount || 0} members
+              </p>
+            )}
+          </div>
         </div>
-        
-        {/* Chat Info */}
-        <div className="flex-1">
-          <h2 className="font-semibold text-gray-900 dark:text-white">{chat.user_name || 'Unknown User'}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {chat.from} • {chat.messageCount || 0} messages
-          </p>
-        </div>
-        
-        {/* Action Buttons */}
-        <div className="flex space-x-2">
-          <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors" title="Delete chat">
-            <TrashIcon className="w-5 h-5" />
+        <div className="flex items-center gap-2">
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            📹
           </button>
-          <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors" title="Video call">
-            <VideoCameraIcon className="w-5 h-5" />
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            📞
           </button>
-          <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors" title="Search">
-            <MagnifyingGlassIcon className="w-5 h-5" />
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            🔍
           </button>
-          <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors" title="More options">
-            <EllipsisVerticalIcon className="w-5 h-5" />
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            ⋮
           </button>
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 whatsapp-pattern p-4">
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Encryption Notice */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg text-sm">
+            🔒 Messages and calls are end-to-end encrypted
           </div>
-        ) : messages.length === 0 ? (
-          <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
-            <div className="text-4xl mb-2">💬</div>
-            <p>No messages yet</p>
-            <p className="text-sm">Start the conversation!</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {/* Encryption Message */}
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-center">
-              <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                🔒 Messages and calls are end-to-end encrypted. Only people in this chat can read, listen, or share them. 
-                <button className="text-blue-600 dark:text-blue-400 underline ml-1">Click to learn more</button>
-              </p>
+        </div>
+
+        {messages.map((message, index) => (
+          <div key={message.id}>
+            {/* Date Separator */}
+            {index === 0 || 
+             (messages[index - 1] && 
+              formatDate(messages[index - 1].date) !== formatDate(message.date)) && (
+              <div className="text-center my-4">
+                <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-sm">
+                  {formatDate(message.date)}
+                </span>
+              </div>
+            )}
+
+            {/* Message Bubble */}
+            <div className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                  message.sender === "me"
+                    ? "bg-green-500 text-white"
+                    : "bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                }`}
+              >
+                <p className="text-sm break-words">{message.text}</p>
+                <div className={`flex items-center justify-end gap-1 mt-1 ${
+                  message.sender === "me" ? "text-green-100" : "text-gray-500 dark:text-gray-400"
+                }`}>
+                  <span className="text-xs">{message.timestamp}</span>
+                  {message.sender === "me" && (
+                    <span className="text-xs">{getStatusIcon(message.status)}</span>
+                  )}
+                </div>
+              </div>
             </div>
-            
-            {messages.map((message) => (
-              <MessageBubble 
-                key={message._id} 
-                message={message} 
-                isOwnMessage={message.from === chat._id}
-              />
-            ))}
-            <div ref={messagesEndRef} />
+          </div>
+        ))}
+
+        {/* Typing Indicator */}
+        {isTyping && (
+          <div className="flex justify-start">
+            <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-lg">
+              <div className="flex items-center gap-1">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
-      {/* Send Message Input */}
-      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
-        <SendMessage onSendMessage={handleSendMessage} />
+      {/* Message Input */}
+      <div className="p-4 bg-white dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+        <div className="flex items-center gap-2">
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            ➕
+          </button>
+          <div className="flex-1 relative">
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type a message"
+              className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            😊
+          </button>
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
+            🎤
+          </button>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChatWindow
+export default ChatWindow;
