@@ -2,6 +2,29 @@ import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Video, Phone, Plus, Send, Mic } from "lucide-react";
 import { useChat } from "../contexts/ChatContext";
 
+// Custom scrollbar styles for chat area
+const chatScrollbarStyles = `
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 8px;
+    min-height: 40px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #374151 #18181b;
+  }
+`;
+
 const ChatWindow = () => {
   const {
     selectedChat,
@@ -15,6 +38,16 @@ const ChatWindow = () => {
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Inject custom scrollbar styles once
+  useEffect(() => {
+    if (!document.getElementById("chat-scrollbar-style")) {
+      const style = document.createElement("style");
+      style.id = "chat-scrollbar-style";
+      style.innerHTML = chatScrollbarStyles;
+      document.head.appendChild(style);
+    }
+  }, []);
 
   const getInitials = (name) => {
     return name.charAt(0).toUpperCase();
@@ -135,7 +168,14 @@ const ChatWindow = () => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div
+        className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar"
+        style={{
+          // For extra fallback in case Tailwind doesn't apply the class
+          scrollbarWidth: "thin",
+          scrollbarColor: "#374151 #18181b",
+        }}
+      >
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
