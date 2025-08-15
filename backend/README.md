@@ -2,7 +2,7 @@
 
 This is the backend server for our WhatsApp Web Clone project. It processes webhook payloads and provides APIs for the frontend.
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1. Update MongoDB Connection String
 
@@ -39,7 +39,7 @@ npm run dev
 npm start
 ```
 
-## 📱 API Endpoints
+##  API Endpoints
 
 - `GET /` - Health check
 - `GET /api/health` - API health check
@@ -47,7 +47,7 @@ npm start
 - `GET /api/messages/:wa_id` - Get messages for a specific user
 - `POST /api/messages` - Send a new demo message
 
-## 🗄️ Database Schema
+##  Database Schema
 
 The `processed_messages` collection stores:
 - Message content and metadata
@@ -61,7 +61,7 @@ The `processed_messages` collection stores:
 - `npm start` - Start server normally
 - `node scripts/process-payloads.js` - Process sample payloads
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 backend/
@@ -76,15 +76,14 @@ backend/
 └── package.json
 ```
 
-## 🧪 Testing
+##  Testing
 
 1. Start the server: `npm run dev`
 2. Open your browser to `http://localhost:5000`
-3. You should see: "WhatsApp Web Clone Backend is running! 🚀"
+3. You should see: "WhatsApp Web Clone Backend is running!"
 4. Test the health endpoint: `http://localhost:5000/api/health`
 
-## 🚨 Troubleshooting
+##  Troubleshooting
 
-- **MongoDB connection failed**: Check your connection string in `config.js`
 - **Port already in use**: Change the PORT in `config.js` to another number (e.g., 5001)
 - **Script errors**: Make sure you're in the `backend` directory when running scripts
