@@ -2,9 +2,9 @@
 
 This is the frontend implementation for Day 2 of the WhatsApp Web Clone project.
 
-## 🚀 Features Implemented
+##  Features Implemented
 
-### ✅ Day 2 Requirements Completed
+###  Day 2 Requirements Completed
 
 - [x] **React Project Setup with Vite**
   - Modern React 18+ with Vite build tool
@@ -20,7 +20,7 @@ This is the frontend implementation for Day 2 of the WhatsApp Web Clone project.
   - Filter tabs (All, Unread, Favourites, Groups)
   - Chat entries with avatars, names, last messages, timestamps
   - Unread message count indicators
-  - Message status indicators (✓, ✓✓, 🚫, ➕)
+  - Message status indicators (✓, ✓✓)
   - Responsive design with hover effects
 
 - [x] **ChatWindow Component**
@@ -34,7 +34,7 @@ This is the frontend implementation for Day 2 of the WhatsApp Web Clone project.
 - [x] **Message Bubbles & Status Indicators**
   - Green bubbles for sent messages (WhatsApp style)
   - White/gray bubbles for received messages
-  - Status icons: ✓ (sent), ✓✓ (delivered/read), 🚫 (deleted)
+  - Status icons: ✓ (sent), ✓✓ (delivered/read)
   - Timestamps below each message
 
 - [x] **Send Message Functionality**
@@ -48,7 +48,7 @@ This is the frontend implementation for Day 2 of the WhatsApp Web Clone project.
   - Theme-aware color schemes using Tailwind's `dark:` variants
   - Consistent styling across all components
 
-## 🎨 Design Features
+##  Design Features
 
 - **Responsive Layout**: Two-column design (1/3 sidebar, 2/3 chat area)
 - **WhatsApp Branding**: Green accent colors (#10B981) for primary elements
@@ -56,7 +56,7 @@ This is the frontend implementation for Day 2 of the WhatsApp Web Clone project.
 - **Interactive Elements**: Hover effects, focus states, and smooth transitions
 - **Accessibility**: Proper contrast ratios and keyboard navigation
 
-## 🛠️ Technical Implementation
+##  Technical Implementation
 
 ### Components Structure
 ```
@@ -81,7 +81,7 @@ src/
 - Responsive design with Tailwind's responsive prefixes
 - Custom animations and transitions
 
-## 🚀 Getting Started
+##  Getting Started
 
 1. **Install Dependencies**
    ```bash
@@ -103,19 +103,19 @@ src/
    npm run preview
    ```
 
-## 🌐 Browser Support
+##  Browser Support
 
 - Modern browsers with ES6+ support
 - Responsive design for desktop and tablet
 - Dark mode support across all browsers
 
-## 📱 Responsive Design
+##  Responsive Design
 
 - Desktop-first design (768px+)
 - Tablet-friendly layout
 - Mobile-responsive components
 
-## 🎯 Next Steps (Day 3)
+##  Next Steps (Day 3)
 
 - [ ] Connect frontend to backend APIs
 - [ ] Add WebSocket for real-time updates
@@ -123,7 +123,7 @@ src/
 - [ ] Deploy to Railway
 - [ ] Testing and bug fixes
 
-## 🔧 Development Notes
+##  Development Notes
 
 - Uses Tailwind CSS v4 with Vite plugin (new approach)
 - No configuration files required for Tailwind

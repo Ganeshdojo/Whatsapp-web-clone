@@ -55,7 +55,7 @@ The `processed_messages` collection stores:
 - Message status (sent, delivered, read)
 - Timestamps
 
-## 🔧 Scripts
+##  Scripts
 
 - `npm run dev` - Start server with nodemon (auto-restart)
 - `npm start` - Start server normally

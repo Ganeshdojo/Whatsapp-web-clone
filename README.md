@@ -29,7 +29,7 @@ A complete WhatsApp Web clone built with modern web technologies, featuring real
 - [x] Polish UI and responsiveness
 - [x] Testing and bug fixes
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
