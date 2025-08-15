@@ -21,7 +21,7 @@ const testEndpoint = (endpoint) => {
       timeout: 5000,
     };
 
-    console.log(`   🔍 Making request to: ${BASE_URL}:${PORT}${endpoint}`);
+    console.log(`    Making request to: ${BASE_URL}:${PORT}${endpoint}`);
 
     const req = http.request(options, (res) => {
       let data = "";
@@ -51,7 +51,7 @@ const testEndpoint = (endpoint) => {
     });
 
     req.on("error", (error) => {
-      console.log(`   ❌ Request error: ${error.message}`);
+      console.log(`    Request error: ${error.message}`);
       reject({
         endpoint,
         error: error.message,
@@ -60,7 +60,7 @@ const testEndpoint = (endpoint) => {
     });
 
     req.setTimeout(5000, () => {
-      console.log(`   ⏰ Request timeout for ${endpoint}`);
+      console.log(`    Request timeout for ${endpoint}`);
       req.destroy();
       reject({
         endpoint,
@@ -75,7 +75,7 @@ const testEndpoint = (endpoint) => {
 
 // Test all endpoints
 const runTests = async () => {
-  console.log("🧪 Testing WhatsApp Web Clone Backend Endpoints...\n");
+  console.log(" Testing WhatsApp Web Clone Backend Endpoints...\n");
 
   let passedTests = 0;
   let totalTests = ENDPOINTS.length;
@@ -83,23 +83,23 @@ const runTests = async () => {
   for (let i = 0; i < ENDPOINTS.length; i++) {
     const endpoint = ENDPOINTS[i];
     try {
-      console.log(`📡 Testing ${i + 1}/${totalTests}: ${endpoint}`);
+      console.log(` Testing ${i + 1}/${totalTests}: ${endpoint}`);
       const result = await testEndpoint(endpoint);
 
       if (result.success) {
-        console.log(`✅ PASS: ${endpoint} (Status: ${result.status})`);
+        console.log(` PASS: ${endpoint} (Status: ${result.status})`);
         if (endpoint === "/api/conversations") {
-          console.log(`   📱 Found ${result.data.length} conversations`);
+          console.log(`    Found ${result.data.length} conversations`);
         } else if (endpoint.includes("/api/messages/")) {
-          console.log(`   💬 Found ${result.data.length} messages`);
+          console.log(`    Found ${result.data.length} messages`);
         }
         passedTests++;
       } else {
-        console.log(`❌ FAIL: ${endpoint} (Status: ${result.status})`);
+        console.log(` FAIL: ${endpoint} (Status: ${result.status})`);
         console.log(`   Error: ${JSON.stringify(result.data)}`);
       }
     } catch (error) {
-      console.log(`❌ ERROR: ${endpoint}`);
+      console.log(` ERROR: ${endpoint}`);
       console.log(`   Error: ${error.error || error.message}`);
     }
 
@@ -112,15 +112,15 @@ const runTests = async () => {
   }
 
   // Summary
-  console.log("📊 Test Results Summary:");
-  console.log(`   ✅ Passed: ${passedTests}/${totalTests}`);
-  console.log(`   ❌ Failed: ${totalTests - passedTests}/${totalTests}`);
+  console.log(" Test Results Summary:");
+  console.log(`    Passed: ${passedTests}/${totalTests}`);
+  console.log(`    Failed: ${totalTests - passedTests}/${totalTests}`);
 
   if (passedTests === totalTests) {
-    console.log("\n🎉 All tests passed! Backend is ready for Phase 2!");
+    console.log("\n All tests passed! Backend is ready for Phase 2!");
   } else {
     console.log(
-      "\n⚠️  Some tests failed. Please check the backend before proceeding."
+      "\n Some tests failed. Please check the backend before proceeding."
     );
   }
 };

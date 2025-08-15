@@ -8,9 +8,9 @@ const Message = require("../models/Message");
 const connectDB = async () => {
   try {
     await mongoose.connect(config.MONGODB_URI);
-    console.log("✅ Connected to MongoDB successfully!");
+    console.log(" Connected to MongoDB successfully!");
   } catch (error) {
-    console.error("❌ MongoDB connection failed:", error.message);
+    console.error(" MongoDB connection failed:", error.message);
     process.exit(1);
   }
 };
@@ -22,7 +22,7 @@ const readPayloadFiles = () => {
 
   // Filter only JSON files
   const jsonFiles = files.filter((file) => file.endsWith(".json"));
-  console.log(`📁 Found ${jsonFiles.length} JSON files to process`);
+  console.log(` Found ${jsonFiles.length} JSON files to process`);
 
   return jsonFiles.map((file) => {
     const filePath = path.join(payloadsDir, file);
@@ -63,7 +63,7 @@ const extractMessageData = (payload) => {
 
     return null; // Not a message payload
   } catch (error) {
-    console.error("❌ Error extracting message data:", error);
+    console.error(" Error extracting message data:", error);
     return null;
   }
 };
@@ -88,7 +88,7 @@ const extractStatusData = (payload) => {
 
     return null; // Not a status payload
   } catch (error) {
-    console.error("❌ Error extracting status data:", error);
+    console.error(" Error extracting status data:", error);
     return null;
   }
 };
@@ -96,7 +96,7 @@ const extractStatusData = (payload) => {
 // Function to process all payloads
 const processPayloads = async () => {
   try {
-    console.log("🚀 Starting payload processing...");
+    console.log(" Starting payload processing...");
 
     // Read all JSON files
     const payloads = readPayloadFiles();
@@ -118,11 +118,11 @@ const processPayloads = async () => {
       }
     });
 
-    console.log(`📨 Found ${messagePayloads.length} message payloads`);
-    console.log(`📊 Found ${statusPayloads.length} status payloads`);
+    console.log(` Found ${messagePayloads.length} message payloads`);
+    console.log(` Found ${statusPayloads.length} status payloads`);
 
     // Process messages first
-    console.log("\n📝 Processing messages...");
+    console.log("\n Processing messages...");
     const messageMap = new Map(); // message_id → _id mapping
 
     for (const { filename, data } of messagePayloads) {
@@ -135,9 +135,7 @@ const processPayloads = async () => {
           });
 
           if (existingMessage) {
-            console.log(
-              `⏭️  Message already exists: ${messageData.message_id}`
-            );
+            console.log(` Message already exists: ${messageData.message_id}`);
             messageMap.set(messageData.message_id, existingMessage._id);
           } else {
             // Create new message
@@ -145,12 +143,12 @@ const processPayloads = async () => {
             const savedMessage = await newMessage.save();
             messageMap.set(messageData.message_id, savedMessage._id);
             console.log(
-              `✅ Saved message: ${messageData.content.substring(0, 50)}...`
+              ` Saved message: ${messageData.content.substring(0, 50)}...`
             );
           }
         } catch (error) {
           console.error(
-            `❌ Error saving message from ${filename}:`,
+            ` Error saving message from ${filename}:`,
             error.message
           );
         }
@@ -158,7 +156,7 @@ const processPayloads = async () => {
     }
 
     // Process status updates
-    console.log("\n📊 Processing status updates...");
+    console.log("\n Processing status updates...");
     let statusUpdates = 0;
 
     for (const { filename, data } of statusPayloads) {
@@ -178,26 +176,26 @@ const processPayloads = async () => {
           if (updatedMessage) {
             statusUpdates++;
             console.log(
-              `✅ Updated status to ${
+              ` Updated status to ${
                 statusData.status
               }: ${updatedMessage.content.substring(0, 50)}...`
             );
           } else {
             console.log(
-              `⚠️  Could not find message for status update: ${statusData.meta_msg_id}`
+              ` Could not find message for status update: ${statusData.meta_msg_id}`
             );
           }
         } catch (error) {
           console.error(
-            `❌ Error updating status from ${filename}:`,
+            ` Error updating status from ${filename}:`,
             error.message
           );
         }
       }
     }
 
-    console.log("\n🎉 Payload processing completed!");
-    console.log(`📊 Summary:`);
+    console.log("\n Payload processing completed!");
+    console.log(` Summary:`);
     console.log(`   - Messages processed: ${messageMap.size}`);
     console.log(`   - Status updates: ${statusUpdates}`);
 
@@ -205,7 +203,7 @@ const processPayloads = async () => {
     const totalMessages = await Message.countDocuments();
     console.log(`   - Total messages in database: ${totalMessages}`);
   } catch (error) {
-    console.error("❌ Error processing payloads:", error);
+    console.error(" Error processing payloads:", error);
   }
 };
 
@@ -220,9 +218,9 @@ const main = async () => {
 
     // Close database connection
     await mongoose.connection.close();
-    console.log("🔌 Database connection closed");
+    console.log(" Database connection closed");
   } catch (error) {
-    console.error("❌ Main execution error:", error);
+    console.error(" Main execution error:", error);
   }
 };
 

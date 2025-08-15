@@ -7,7 +7,7 @@ const router = express.Router();
 // GET /api/conversations - Get all conversations grouped by user
 router.get("/conversations", async (req, res) => {
   try {
-    console.log("📱 Fetching conversations...");
+    console.log(" Fetching conversations...");
 
     // Use MongoDB aggregation to group messages by user
     // This is like saying "give me all users and their latest message"
@@ -34,10 +34,10 @@ router.get("/conversations", async (req, res) => {
       { $sort: { "latestMessage.timestamp": -1 } },
     ]);
 
-    console.log(`✅ Found ${conversations.length} conversations`);
+    console.log(` Found ${conversations.length} conversations`);
     res.json(conversations);
   } catch (error) {
-    console.error("❌ Error fetching conversations:", error);
+    console.error(" Error fetching conversations:", error);
     res.status(500).json({ error: "Failed to fetch conversations" });
   }
 });
@@ -46,17 +46,17 @@ router.get("/conversations", async (req, res) => {
 router.get("/messages/:wa_id", async (req, res) => {
   try {
     const { wa_id } = req.params; // Get the wa_id from the URL
-    console.log(`📱 Fetching messages for user: ${wa_id}`);
+    console.log(` Fetching messages for user: ${wa_id}`);
 
     // Find all messages for this user, sorted by timestamp (oldest first)
     const messages = await Message.find({ wa_id })
       .sort({ timestamp: 1 }) // 1 means ascending (oldest to newest)
       .select("-__v"); // Don't include the __v field (MongoDB version field)
 
-    console.log(`✅ Found ${messages.length} messages for user ${wa_id}`);
+    console.log(` Found ${messages.length} messages for user ${wa_id}`);
     res.json(messages);
   } catch (error) {
-    console.error("❌ Error fetching messages:", error);
+    console.error(" Error fetching messages:", error);
     res.status(500).json({ error: "Failed to fetch messages" });
   }
 });
@@ -73,7 +73,7 @@ router.post("/messages", async (req, res) => {
       });
     }
 
-    console.log(`📱 Creating new demo message for user: ${wa_id}`);
+    console.log(` Creating new demo message for user: ${wa_id}`);
 
     // Create a new message
     const newMessage = new Message({
@@ -93,10 +93,10 @@ router.post("/messages", async (req, res) => {
     // Save the message to database
     const savedMessage = await newMessage.save();
 
-    console.log("✅ Demo message created successfully");
+    console.log(" Demo message created successfully");
     res.status(201).json(savedMessage);
   } catch (error) {
-    console.error("❌ Error creating demo message:", error);
+    console.error(" Error creating demo message:", error);
     res.status(500).json({ error: "Failed to create demo message" });
   }
 });

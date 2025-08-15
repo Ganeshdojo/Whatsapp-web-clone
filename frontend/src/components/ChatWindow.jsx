@@ -1,98 +1,40 @@
 import { useState, useEffect, useRef } from "react";
+import { ArrowLeft, Video, Phone, Plus, Send, Mic } from "lucide-react";
+import { useChat } from "../contexts/ChatContext";
 
-const ChatWindow = ({ chat, theme }) => {
-  const [messages, setMessages] = useState([]);
+const ChatWindow = () => {
+  const {
+    selectedChat,
+    setSelectedChat,
+    messages,
+    loading,
+    error,
+    sendMessage,
+    clearError,
+  } = useChat();
   const [newMessage, setNewMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Sample messages data - in real app this would come from backend
-  useEffect(() => {
-    if (chat) {
-      const sampleMessages = [
-        {
-          id: 1,
-          text: "Dear Candidate, We are hiring for frontend developer fresher position. 12 month contract. Required Qualification- B.tech/MCA/BCA. Required Skills WordPress/HTML/CSS/JS. Please check the link for security contract details: https://wavenix.cloud/bond-information/ Company: Wavenix Technologies Lucknow. About Company: We are a digital growth partner specializing in delivering innovative IT solutions.",
-          sender: "them",
-          timestamp: "21:12",
-          status: "read",
-          date: "2/8/2025"
-        },
-        {
-          id: 2,
-          text: "Thank you, Why do I need to pay the 15000rs?",
-          sender: "me",
-          timestamp: "11:59",
-          status: "read"
-        },
-        {
-          id: 3,
-          text: "We specialize in delivering innovative IT solutions that help businesses grow and succeed in the digital age.",
-          sender: "them",
-          timestamp: "13:44",
-          status: "read"
-        },
-        {
-          id: 4,
-          text: "why do I need to pay 15000rs?",
-          sender: "me",
-          timestamp: "14:40",
-          status: "read"
-        },
-        {
-          id: 5,
-          text: "The 15000rs is a security deposit for the 12-month contract period. It ensures commitment and covers any potential damages or early termination fees.",
-          sender: "them",
-          timestamp: "15:30",
-          status: "delivered"
-        }
-      ];
-      setMessages(sampleMessages);
-    }
-  }, [chat]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const getInitials = (name) => {
+    return name.charAt(0).toUpperCase();
   };
 
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const message = {
-        id: Date.now(),
-        text: newMessage,
-        sender: "me",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: "sent"
-      };
-      setMessages(prev => [...prev, message]);
-      setNewMessage("");
-      
-      // Simulate typing indicator
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        // Simulate received message
-        const reply = {
-          id: Date.now() + 1,
-          text: "Thanks for your message! I'll get back to you soon.",
-          sender: "them",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          status: "read"
-        };
-        setMessages(prev => [...prev, reply]);
-      }, 2000);
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
+  const getAvatarColor = (name) => {
+    const colors = [
+      "bg-red-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-yellow-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-indigo-500",
+      "bg-teal-500",
+      "bg-orange-500",
+      "bg-cyan-500",
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
   };
 
   const getStatusIcon = (status) => {
@@ -104,129 +46,162 @@ const ChatWindow = ({ chat, theme }) => {
       case "sent":
         return "✓";
       default:
-        return "";
+        return "✓";
     }
   };
 
-  const formatDate = (date) => {
-    const today = new Date();
-    const messageDate = new Date(date);
-    
-    if (today.toDateString() === messageDate.toDateString()) {
-      return "Today";
-    } else if (today.getDate() - messageDate.getDate() === 1) {
-      return "Yesterday";
-    } else {
-      return messageDate.toLocaleDateString();
+  const handleSendMessage = async () => {
+    if (!newMessage.trim() || !selectedChat) return;
+
+    try {
+      setSending(true);
+      await sendMessage(
+        selectedChat.waId || selectedChat.phoneNumber,
+        newMessage.trim()
+      );
+      setNewMessage("");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    } finally {
+      setSending(false);
     }
   };
 
-  if (!chat) return null;
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, selectedChat]);
+
+  if (!selectedChat) {
+    return (
+      <div className="h-full bg-gray-100 dark:bg-zinc-900 flex items-center justify-center">
+        <div className="text-center p-8">
+          <div className="text-6xl mb-4">💬</div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+            Welcome to WhatsApp Web Clone
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Select a conversation to start messaging
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const currentMessages =
+    messages[selectedChat.waId || selectedChat.phoneNumber] || [];
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-800">
-      {/* Chat Header */}
-      <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
+    <div className="h-full bg-gray-100 dark:bg-zinc-900 flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-3 md:p-4 bg-white dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-600">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-lg mr-3">
-            {chat.avatar}
+          {/* Mobile Back Button */}
+          <button
+            onClick={() => setSelectedChat(null)}
+            className="md:hidden p-2 mr-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+
+          {/* Avatar */}
+          <div
+            className={`w-8 h-8 md:w-10 md:h-10 rounded-full ${getAvatarColor(
+              selectedChat.name
+            )} flex items-center justify-center text-white font-semibold text-base md:text-lg mr-3`}
+          >
+            {getInitials(selectedChat.name)}
           </div>
+
+          {/* Chat Info */}
           <div>
-            <h2 className="font-semibold text-gray-800 dark:text-white">
-              {chat.name}
-            </h2>
-            {chat.isGroup && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Group • {chat.memberCount || 0} members
-              </p>
-            )}
+            <h3 className="font-semibold text-gray-800 dark:text-zinc-200">
+              {selectedChat.name}
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-zinc-400">
+              {selectedChat.isGroup
+                ? `${selectedChat.memberCount} members`
+                : selectedChat.phoneNumber}
+            </p>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            📹
-          </button>
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            📞
-          </button>
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            🔍
-          </button>
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            ⋮
-          </button>
         </div>
       </div>
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Encryption Notice */}
-        <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-lg text-sm">
-            🔒 Messages and calls are end-to-end encrypted
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-2"></div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Loading messages...
+              </p>
+            </div>
           </div>
-        </div>
-
-        {messages.map((message, index) => (
-          <div key={message.id}>
-            {/* Date Separator */}
-            {index === 0 || 
-             (messages[index - 1] && 
-              formatDate(messages[index - 1].date) !== formatDate(message.date)) && (
-              <div className="text-center my-4">
-                <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full text-sm">
-                  {formatDate(message.date)}
-                </span>
-              </div>
-            )}
-
-            {/* Message Bubble */}
-            <div className={`flex ${message.sender === "me" ? "justify-end" : "justify-start"}`}>
+        ) : error ? (
+          <div className="text-center p-6">
+            <div className="text-red-500 text-4xl mb-2">⚠️</div>
+            <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+            <button
+              onClick={clearError}
+              className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : currentMessages.length === 0 ? (
+          <div className="text-center p-6">
+            <div className="text-gray-400 text-4xl mb-2">💬</div>
+            <p className="text-gray-500 dark:text-gray-400">No messages yet</p>
+            <p className="text-gray-400 text-sm">Start the conversation!</p>
+          </div>
+        ) : (
+          currentMessages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${
+                message.sender === "me" ? "justify-end" : "justify-start"
+              }`}
+            >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-lg ${
                   message.sender === "me"
-                    ? "bg-green-500 text-white"
-                    : "bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+                    ? "bg-green-500 text-white dark:bg-green-800"
+                    : "bg-white dark:bg-zinc-700 text-gray-800 dark:text-zinc-200"
                 }`}
               >
-                <p className="text-sm break-words">{message.text}</p>
-                <div className={`flex items-center justify-end gap-1 mt-1 ${
-                  message.sender === "me" ? "text-green-100" : "text-gray-500 dark:text-gray-400"
-                }`}>
-                  <span className="text-xs">{message.timestamp}</span>
+                <p className="text-sm">{message.text}</p>
+                <div className="flex items-center justify-end gap-1 mt-1">
+                  <span className="text-xs opacity-70">
+                    {message.timestamp}
+                  </span>
                   {message.sender === "me" && (
-                    <span className="text-xs">{getStatusIcon(message.status)}</span>
+                    <span className="text-xs opacity-70">
+                      {getStatusIcon(message.status)}
+                    </span>
                   )}
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-
-        {/* Typing Indicator */}
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-lg">
-              <div className="flex items-center gap-1">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))
         )}
-
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="p-4 bg-white dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+      {/* Input Area */}
+      <div className="p-3 md:p-4 bg-white dark:bg-zinc-800 border-t border-gray-200 dark:border-zinc-600">
         <div className="flex items-center gap-2">
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            ➕
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-600 rounded-full">
+            <Plus className="w-5 h-5" />
           </button>
+
           <div className="flex-1 relative">
             <input
               type="text"
@@ -234,14 +209,21 @@ const ChatWindow = ({ chat, theme }) => {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type a message"
-              className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              disabled={sending}
+              className="w-full px-4 md:px-4 py-4 bg-gray-100 dark:bg-zinc-700 text-gray-800 dark:text-zinc-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:opacity-50"
             />
           </div>
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            😊
-          </button>
-          <button className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full">
-            🎤
+
+          <button
+            onClick={handleSendMessage}
+            disabled={!newMessage.trim() || sending}
+            className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {sending ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-500 dark:border-green-800"></div>
+            ) : (
+              <Send className="w-5 h-5" color="lime" />
+            )}
           </button>
         </div>
       </div>
